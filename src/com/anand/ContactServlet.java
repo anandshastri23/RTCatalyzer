@@ -1,6 +1,7 @@
 package com.anand;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -17,7 +18,9 @@ import javax.sql.DataSource;
 public class ContactServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connector connector;
-
+	public int outputID = 0;
+	public List<Integer> inputIDs = new ArrayList<Integer>();
+	
 	@Resource(name="jdbc/RTCatalyzer")
 	private DataSource dataSource;
 
@@ -47,6 +50,9 @@ public class ContactServlet extends HttpServlet {
 			switch(command){
 			case "select":
 				getOutputFieldDetails(request,response);
+				break;
+			case "calculate":
+				collectFieldValues(request,response);
 				break;
 			default:
 				listfields(request, response);
@@ -78,16 +84,51 @@ public class ContactServlet extends HttpServlet {
 	public void getOutputFieldDetails(HttpServletRequest request, HttpServletResponse response) throws Exception{
 		try {
 			String id = request.getParameter("fieldId");	
+			outputID = Integer.parseInt(id);
 			List<Fields> fields = connector.getInputfields1(id, dataSource);
 			
 			for (int i = 0; i < fields.size(); i++) {
 				System.out.println("Field name:" + fields.get(i).fieldDesc);
+				inputIDs.add(fields.get(i).fieldId);
 			}
 			
 			request.setAttribute("fields", fields);
 
 			RequestDispatcher dispatcher = request.getRequestDispatcher("/list-input-fields.jsp");
 			dispatcher.forward(request, response);
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public void collectFieldValues(HttpServletRequest request, HttpServletResponse response) throws Exception{
+		System.out.println("Output field ID" +outputID);
+		List<String> compRule = connector.getCompRule(outputID, dataSource);
+
+		List<FieldValue> fieldvalue = new ArrayList<FieldValue>();
+		try {
+			String[] values = request.getParameterValues("fieldvalue");	
+			List<Integer> intValues = new ArrayList<Integer>();
+			
+			for (int i = 0; i < values.length; i++) {
+				// System.out.println("Values:" + values[i]);
+				
+				intValues.add(Integer.parseInt(values[i]));
+				
+				FieldValue temp = new FieldValue(inputIDs.get(i),intValues.get(i)); 
+				fieldvalue.add(temp);
+				
+				System.out.println("input field IDs:" +inputIDs.get(i));
+				System.out.println("Input field Values:" +intValues.get(i));
+			}
+			
+			for (int i = 0; i < compRule.size(); i++) {
+				System.out.println("Computational rule " +i+":"+compRule.get(i));	
+			}
+			//Parsing begins here
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

@@ -164,6 +164,41 @@ public class Connector {
 	return fields;
 	}
 	
+	public List<String> getCompRule(int id, DataSource dataSource){
+		Connection myConn = null;
+		PreparedStatement myStmt = null;
+		ResultSet myRS = null;
+
+		List<String> compRule = new ArrayList<String>();
+		
+		try{
+			myConn = dataSource.getConnection();
+
+			String sql = " select Comp_Rule from Business_rules where Output_field_ID=? ";
+
+			myStmt = myConn.prepareStatement(sql);
+
+			myStmt.setInt(1,id);
+
+			myRS = myStmt.executeQuery();
+	
+			while(myRS.next()){
+			
+				String comprule = (myRS.getString("Comp_Rule"));
+				compRule.add(comprule);
+			}
+		
+		}
+		catch(Exception exe){
+			exe.printStackTrace();	
+		}
+		finally{
+			close(myConn,myStmt, null);
+		}
+		return compRule;
+	}
+
+	
 	private void close(Connection myConn, Statement myStmt, ResultSet myRS) {
 		try{
 			if (myRS != null){
