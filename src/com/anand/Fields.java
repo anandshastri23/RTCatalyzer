@@ -4,13 +4,15 @@ public class Fields {
 	public int fieldId;
 	public String fieldDesc;
 	public String fieldType;
+	public String refID;
 	
 	
-	public Fields(int fieldId, String fieldDesc, String fieldType) {
+	public Fields(int fieldId, String fieldDesc, String fieldType, String refID) {
 		super();
 		this.fieldId = fieldId;
 		this.fieldDesc = fieldDesc;
 		this.fieldType = fieldType;
+		this.refID = refID;
 	}
 	public int getFieldId() {
 		return fieldId;
@@ -29,6 +31,12 @@ public class Fields {
 	}
 	public void setFieldType(String fieldType) {
 		this.fieldType = fieldType;
+	}
+	public String getRefID() {
+		return refID;
+	}
+	public void setRefID(String refID) {
+		this.refID = refID;
 	}
 	
 	

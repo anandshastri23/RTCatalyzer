@@ -34,7 +34,7 @@ public class Connector {
 			myRS = myStmt.executeQuery(sql);
 
 			while(myRS.next()){
-				Fields field = new Fields(myRS.getInt("Field_ID"),myRS.getString("Field_Desc"),myRS.getString("Field_Type"));
+				Fields field = new Fields(myRS.getInt("Field_ID"),myRS.getString("Field_Desc"),myRS.getString("Field_Type"),myRS.getString("Ref_ID"));
 				fields.add(field);
 			}
 		}
@@ -132,7 +132,7 @@ public class Connector {
 			
 		}
 		
-	for (int i = 0; i < ruleIDs.size(); i++){
+	for (int i = 0; i < fieldIDs.size(); i++){
 		
 		System.out.println("final list "+i+":"+fieldIDs.get(i));
 			try{
@@ -147,7 +147,7 @@ public class Connector {
 
 				while(myRS.next()){
 				
-					Fields field = new Fields(myRS.getInt("Field_ID"),myRS.getString("Field_Desc"),myRS.getString("Field_Type"));
+					Fields field = new Fields(myRS.getInt("Field_ID"),myRS.getString("Field_Desc"),myRS.getString("Field_Type"),myRS.getString("Ref_ID"));
 					fields.add(field);
 				}
 						
@@ -198,7 +198,82 @@ public class Connector {
 		return compRule;
 	}
 
-	
+
+	public List<Integer> getRuleIDs(String id, DataSource dataSource){
+		List<Integer> ruleIDs = new ArrayList<Integer>();
+		
+		Connection myConn = null;
+		PreparedStatement myStmt = null;
+		ResultSet myRS = null;
+		
+		System.out.println("id:"+id);
+		
+		int intfieldId = Integer.parseInt(id);
+		
+		try{
+			myConn = dataSource.getConnection();
+
+			String sql = " select Rule_ID from Business_rules where Output_field_ID=? ";
+
+			myStmt = myConn.prepareStatement(sql);
+
+			myStmt.setInt(1,intfieldId);
+
+			myRS = myStmt.executeQuery();
+
+			while(myRS.next()){
+			
+				int ID = (myRS.getInt("Rule_ID"));
+				ruleIDs.add(ID);
+				System.out.println("ID"+ID);
+			}
+		
+		}
+		catch(Exception exe){
+			exe.printStackTrace();	
+		}
+		finally{
+			close(myConn,myStmt, null);
+		}
+		
+		return ruleIDs;
+	}
+
+	public List<String> getRules(List<Integer> ruleIDs, DataSource dataSource){
+		List<String> businessRules = new ArrayList<String>();
+		
+		Connection myConn = null;
+		PreparedStatement myStmt = null;
+		ResultSet myRS = null;
+		for (int i =0; i <ruleIDs.size();i++){
+		try{
+			myConn = dataSource.getConnection();
+
+			String sql = " select Decisions from Business_rules where Rule_ID=? ";
+
+			myStmt = myConn.prepareStatement(sql);
+
+			myStmt.setInt(1,ruleIDs.get(i));
+
+			myRS = myStmt.executeQuery();
+
+			while(myRS.next()){
+			
+				String rule = (myRS.getString("Decisions"));
+				businessRules.add(rule);
+
+			}
+		
+		}
+		catch(Exception exe){
+			exe.printStackTrace();	
+		}
+		finally{
+			close(myConn,myStmt, null);
+		}
+		}
+		return businessRules;
+	}
 	private void close(Connection myConn, Statement myStmt, ResultSet myRS) {
 		try{
 			if (myRS != null){

@@ -7,7 +7,16 @@
 	<title>Output fields</title>
 	
 	<link type="text/css" rel="stylesheet" href="css/style.css">
-	
+	<style>
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+    text-align: center;    
+}
+</style>
 	
 </head>
 

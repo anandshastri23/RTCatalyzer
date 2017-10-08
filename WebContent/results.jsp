@@ -28,45 +28,57 @@ th, td {
 	</div>
 	<br/>
 
-	<div  id="container">
-		<form action="/RTCatalyzer/ContactServlet">	
+
+ <%! int i = 1; %>
+	<div  id="container">	
 			<table>
 				<tr>
 					<th>Input Field </th>
 					<th>Value</th>
-			<!--		<th> Rule# </th> 
-					<th>Output</th>
-					<th>View rule</th> -->
-				</tr>
-			 <%! int i = 1; %>
-			
-		 
-			<c:forEach var="tempField" items="${fields }">
+				</tr>	
+
+			<c:forEach var="tempField" items="${fullResults }">
 
 			<!-- for select -->
 				<c:url var="templink" value="ContactServlet">
 					<c:param name="hidden" value="select"/>
-					<c:param name="fieldId" value="${tempField.fieldId}"/>
 
 				</c:url>
 				<tr>
 					<td> <label>${tempField.fieldDesc}</label> </td>
-					<td> <input type="text" name="fieldvalue" > </td>
-<!--					<td><%= i %> <% i++; %></td> 
-					<td> 
-						 <label>${requestScope.results}</label> 
+					<td> <label>${tempField.fieldValue}</label></td>
+			</c:forEach>
+			</table>
+			
+			<br>
+			<br>
+			<table>
+				<tr>
+					<th> Rule# </th>
+					<th>Output</th>
+					<th>Select</th>
+				</tr>
 
-					</td>
-					<td> <input type="button" name="view rule" ></td>
--->				
+				<c:forEach var="tempField" items="${fullResults }">
+				<!-- for select -->
+				<c:url var="templink" value="ContactServlet">
+					<c:param name="hidden" value="select"/>
+
+				</c:url>
+					
+				<tr>
+					
+					<td><%= i %> <% i++; %></td> 
+					<td><label>${tempField.result}</label></td>
+					<td> <input type="button" name="view rule" value ="View rule"></td>
+				
 				</tr>
 			</c:forEach>
-		
+
 			</table>
+			
 			<hr/>
-			<input type="hidden" name="hidden" value="calculate">
-			<p align="center"> <input type="submit" value="submit"> </p>
-			</form>
+
 		
 		</div>
 
